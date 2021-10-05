@@ -14,4 +14,5 @@ const config = {
 
  seedDatabase(firebase);
 
+ 
   export { firebase, FieldValue };
