@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from "../images/iphone-with-profile.jpg";
 import Logo from "../images/logo.png";
 import * as ROUTES from '../constants/routes';
@@ -7,7 +7,17 @@ import {Link} from 'react-router-dom';
 
 
 export default function Login(){
+
+        const [email, setEmail] = useState('');
+        const [password, setPassword] = useState('');
+
+        const[error, setError] = useState('');
+        const isInvalid = password === '' || email === '';
     
+        useEffect(()=>{
+            document.title = "Login - Instagram"
+        }, [])
+  
 
     return (
         
@@ -26,16 +36,21 @@ export default function Login(){
                         className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                         type="text"
                         placeholder="Email address" 
+                        onChange={({ target}) => setEmail(target.value)}
                     />
                      <input
                         aria-label="Enter your password"
                         className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                         type="password"
                         placeholder="Password" 
+                        onChange={({ target}) => setPassword(target.value)}
                     />
                     <button 
+                        disabled={{isInvalid}}
                         type="submit"
-                        className={`bg-blue-500 text-white w-full rounded h-8 font-bold`}
+                        className={`bg-blue-500 text-white w-full rounded h-8 font-bold
+                        ${ isInvalid && ' cursor-not-allowed opacity-50'}`}
+                    
                     >Login    
                     </button>
                 </form>
@@ -52,7 +67,11 @@ export default function Login(){
             
       </div>
     )
-}
+};
+
+
+
+
  
 
 
