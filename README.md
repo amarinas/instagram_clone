@@ -1,1 +1,1 @@
-#This is a instagram clone using react and tailwind css
+#This is an awesome instagram clone using react and tailwind css. 
