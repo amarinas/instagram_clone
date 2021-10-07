@@ -1,23 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Image from "../images/iphone-with-profile.jpg";
 import Logo from "../images/logo.png";
 import * as ROUTES from '../constants/routes';
 import {Link} from 'react-router-dom';
+import FirebaseContext from '../context/firebase'
 
 
 
 export default function Login(){
+        const { firebase } = useContext(FirebaseContext);
 
         const [email, setEmail] = useState('');
         const [password, setPassword] = useState('');
 
         const[error, setError] = useState('');
         const isInvalid = password === '' || email === '';
+
+        const handleLogin = async (event) => {
+            event.preventDefault();
+            
+            try {
+                await firebase.auth().singInWithEmailAndPassword(email, password)
+
+            } catch(error) {
+                setEmail('');
+                setPassword('');
+                setError(error.message);
+            }
+            console.log(error);
+        }
     
         useEffect(()=>{
             document.title = "Login - Instagram"
         }, [])
-  
+        
+
 
     return (
         
@@ -30,19 +47,21 @@ export default function Login(){
                 <h1 className= "flex justify-center w-full">
                     <img src={Logo} alt="Logo" className="mt-2 w-6/12 mb4"/>
                 </h1>
-                <form method="POST">
+                <form onSubmit={handleLogin} method="POST">
                     <input
                         aria-label="Enter your email address"
                         className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                         type="text"
                         placeholder="Email address" 
+                        value={email}
                         onChange={({ target}) => setEmail(target.value)}
                     />
                      <input
                         aria-label="Enter your password"
                         className="text-sm w-full mr-3 py-5 px-4 h-2 border rounded mb-2"
                         type="password"
-                        placeholder="Password" 
+                        placeholder="Password"
+                        value={password} 
                         onChange={({ target}) => setPassword(target.value)}
                     />
                     <button 
