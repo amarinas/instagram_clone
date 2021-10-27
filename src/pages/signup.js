@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import Logo from '../images/logo.png';
 import * as ROUTES from '../constants/routes';
 import FirebaseContext from '../context/firebase';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doesUsernameExist } from '../services/firebase';
 
 export default function SignUp() {
     const { firebase } = useContext(FirebaseContext);
+    const history = useHistory();
+
 
     const [userName, setUserName] = useState('');
     const [fullName, setFullName] = useState('');
     const [emailAddress, setEmailAddress] = useState('');
     const [password, setPassword] = useState('');
-
-    
 
     const [error, setError] = useState('');
     const isInvalid = userName === '' || fullName === '' || emailAddress === '' || password === ''; 
@@ -21,33 +21,42 @@ export default function SignUp() {
     const handleSignUp = async (event) => {
         event.preventDefault();
 
-        try {
-            
-            const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password);
+        const usernameExists = await doesUsernameExist(userName);
 
-            await createdUserResult.user.updateProfile({
-                displayName: userName
-            });
+        if(!usernameExists.length){
+            try {
+                const createdUserResult = await firebase.auth().createUserWithEmailAndPassword(emailAddress, password);
+    
+                await createdUserResult.user.updateProfile({
+                    displayName: userName
+                });
+    
+                await firebase.firestore().collection('users').add({
+                    userId: createdUserResult.user.uid,
+                    userName: userName.toLowerCase(),
+                    fullName,
+                    emailAddress: emailAddress.toLowerCase(),
+                    following: [],
+                    followers: [],
+                    dateCreated: Date.now()
+    
+                })
+    
+                history.push(ROUTES.DASHBOARD);
+    
+            } catch (error){
+                setFullName('');
+                setError(error.message);          
+            }
 
-            await firebase.firestore().collection('user').add({
-                userId: createdUserResult.user.uid,
-                username: userName.toLowerCase(),
-                fullName,
-                emailAddress: emailAddress.toLowerCase(),
-                following: [],
-                dateCreated: Date.now()
-
-            })
-
-
-
-        } catch (error){
+        }else{
             setUserName('');
             setEmailAddress('');
             setFullName('');
             setPassword('');
-            setError(error.message);          
+            setError('That username is already taken, try again!');   
         }
+        
     }
 
     useEffect(() => {
@@ -69,7 +78,7 @@ export default function SignUp() {
                         type="text"
                         placeholder="Username"
                         value= {userName}
-                        onChange={({ target }) => setUserName(target.value.toLocaleLowerCase)}
+                        onChange={({ target }) => setUserName(target.value.toLowerCase())}
                         
                         
                     />
@@ -79,7 +88,7 @@ export default function SignUp() {
                         type="text"
                         placeholder="Full Name"
                         value={fullName}
-                        onChange={({ target }) => setFullName(target.value.toLocaleLowerCase)}
+                        onChange={({ target }) => setFullName(target.value.toLowerCase())}
                         
                     />
                     <input
@@ -88,7 +97,7 @@ export default function SignUp() {
                         type="text"
                         placeholder="Email address"
                         value={emailAddress}
-                        onChange={({ target }) => setEmailAddress(target.value.toLocaleLowerCase)}
+                        onChange={({ target }) => setEmailAddress(target.value.toLowerCase())}
                         
                     />
                     <input
