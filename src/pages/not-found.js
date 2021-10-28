@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export default function NotFound(){
+
+    useEffect(() => {
+        document.title = '404 - Not Found';
+    })
+
     return (
-        <p>Hello from NotFound!</p>
+        <div className="bg-gray">
+            <div className="mx-auto max-w-screen-lg">
+                <p className="text-center text-2xl"> NotFound! </p>
+            </div>
+        </div>
+        
     )
 }
