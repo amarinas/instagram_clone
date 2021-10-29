@@ -17,9 +17,8 @@ export default function App() {
                         <Route path={ROUTES.LOGIN} component={Login} />
                         <Route path={ROUTES.SIGN_UP} component={SignUp} />
                         <Route path={ROUTES.PROFILE} component={Profile} />
-                        <Route  component={NotFound} />
                         <Route path={ROUTES.DASHBOARD} component={Dashboard} exact />
-
+                        <Route  component={NotFound} />
                     </Switch>
                 {/* <p>This is where our content will be </p> */}
             </Suspense>

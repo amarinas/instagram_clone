@@ -7,7 +7,7 @@ export default function NotFound(){
     })
 
     return (
-        <div className="bg-gray">
+        <div className="bg-gray-200">
             <div className="mx-auto max-w-screen-lg">
                 <p className="text-center text-2xl"> NotFound! </p>
             </div>
